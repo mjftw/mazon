@@ -11,45 +11,61 @@ class Grid:
     self.cols: int = cols
     self.cells = self._setup_cells(rows, cols)
 
-  '''Link the cell at @at to its northern neighbor'''
-  def link_north(self, at: At) -> 'Grid':
+  '''Link the cell at @at to its northern neighbor.
+  Returns true if the link was successful false otherwise'''
+  def link_north(self, at: At) -> bool:
     self._validate_at(at)
     cell = self.cells[at]
+
     if cell.north:
       north = self.cells[at.north()]
       self.cells[at] = replace(cell, north=replace(cell.north, is_linked=True))
       self.cells[at.north()] = replace(north, south=replace(north.south, is_linked=True))
-    return self
+      return True
+    else:
+      return False
 
-  '''Link the cell at @at to its southern neighbor'''
-  def link_south(self, at: At) -> 'Grid':
+  '''Link the cell at @at to its southern neighbor.
+  Returns true if the link was successful false otherwise'''
+  def link_south(self, at: At) -> bool:
     self._validate_at(at)
     cell = self.cells[at]
+
     if cell.south:
       south = self.cells[at.south()]
       self.cells[at] = replace(cell, south=replace(cell.south, is_linked=True))
       self.cells[at.south()] = replace(south, north=replace(south.north, is_linked=True))
-    return self
+      return True
+    else:
+      return False
 
-  '''Link the cell at @at to its eastern neighbor'''
-  def link_east(self, at: At) -> 'Grid':
+  '''Link the cell at @at to its eastern neighbor.
+  Returns true if the link was successful false otherwise'''
+  def link_east(self, at: At) -> bool:
     self._validate_at(at)
     cell = self.cells[at]
+
     if cell.east:
       east = self.cells[at.east()]
       self.cells[at] = replace(cell, east=replace(cell.east, is_linked=True))
       self.cells[at.east()] = replace(east, west=replace(east.west, is_linked=True))
-    return self
+      return True
+    else:
+      return False
 
-  '''Link the cell at @at to its western neighbor'''
-  def link_west(self, at: At) -> 'Grid':
+  '''Link the cell at @at to its western neighbor.
+  Returns true if the link was successful false otherwise'''
+  def link_west(self, at: At) -> bool:
     self._validate_at(at)
     cell = self.cells[at]
+
     if cell.west:
       west = self.cells[at.west()]
       self.cells[at] = replace(cell, west=replace(cell.west, is_linked=True))
       self.cells[at.west()] = replace(west, east=replace(west.east, is_linked=True))
-    return self
+      return True
+    else:
+      return False
 
   '''Iterate cells in @col north to south'''
   def col_ns(self, col: int) -> Iterable[Cell]:
