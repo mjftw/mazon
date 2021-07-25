@@ -11,37 +11,41 @@ class Grid:
     self.cols: int = cols
     self.cells = self._setup_cells(rows, cols)
 
-  def link_north(self, at: At):
+  def link_north(self, at: At) -> 'Grid':
     self._validate_at(at)
     cell = self.cells[at]
     if cell.north:
       north = self.cells[at.north()]
       self.cells[at] = replace(cell, north=replace(cell.north, is_linked=True))
       self.cells[at.north()] = replace(north, south=replace(north.south, is_linked=True))
+    return self
 
-  def link_south(self, at: At):
+  def link_south(self, at: At) -> 'Grid':
     self._validate_at(at)
     cell = self.cells[at]
     if cell.south:
       south = self.cells[at.south()]
       self.cells[at] = replace(cell, south=replace(cell.south, is_linked=True))
       self.cells[at.south()] = replace(south, north=replace(south.north, is_linked=True))
+    return self
 
-  def link_east(self, at: At):
+  def link_east(self, at: At) -> 'Grid':
     self._validate_at(at)
     cell = self.cells[at]
     if cell.east:
       east = self.cells[at.east()]
       self.cells[at] = replace(cell, east=replace(cell.east, is_linked=True))
       self.cells[at.east()] = replace(east, west=replace(east.west, is_linked=True))
+    return self
 
-  def link_west(self, at: At):
+  def link_west(self, at: At) -> 'Grid':
     self._validate_at(at)
     cell = self.cells[at]
     if cell.west:
       west = self.cells[at.west()]
       self.cells[at] = replace(cell, west=replace(cell.west, is_linked=True))
       self.cells[at.west()] = replace(west, east=replace(west.east, is_linked=True))
+    return self
 
   def col_ns(self, col: int) -> Iterable[Cell]:
     if 0 <= col < self.cols:
@@ -70,6 +74,23 @@ class Grid:
         yield self.cells[At(row, col)]
     else:
       yield from ()
+
+  def __repr__(self) -> str:
+    print(self.rows)
+    output: str = "+" + ("---+" * self.cols) + "\n"
+
+    for row in range(self.rows):
+      middle_str = "|"
+      bottom_str = "+"
+
+      for cell in self.row_we(row):
+        middle_str += "   " + (" " if cell.east and cell.east.is_linked else "|")
+        bottom_str += ("   " if cell.south and cell.south.is_linked else "---") + "+"
+        print(row, cell)
+
+      output += middle_str + "\n" + bottom_str + "\n"
+
+    return output
 
   def _setup_cells(self, rows: int, cols: int) -> Dict[At, Cell]:
     cells = {At(row, col): Cell()
