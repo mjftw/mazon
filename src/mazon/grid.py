@@ -94,7 +94,6 @@ class Grid:
       for cell in self.row_we(row):
         middle_str += "   " + (" " if cell.east and cell.east.is_linked else "|")
         bottom_str += ("   " if cell.south and cell.south.is_linked else "---") + "+"
-        print(row, cell)
 
       output += middle_str + "\n" + bottom_str + "\n"
 
