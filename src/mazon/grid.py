@@ -11,6 +11,7 @@ class Grid:
     self.cols: int = cols
     self.cells = self._setup_cells(rows, cols)
 
+  '''Link the cell at @at to its northern neighbor'''
   def link_north(self, at: At) -> 'Grid':
     self._validate_at(at)
     cell = self.cells[at]
@@ -20,6 +21,7 @@ class Grid:
       self.cells[at.north()] = replace(north, south=replace(north.south, is_linked=True))
     return self
 
+  '''Link the cell at @at to its southern neighbor'''
   def link_south(self, at: At) -> 'Grid':
     self._validate_at(at)
     cell = self.cells[at]
@@ -29,6 +31,7 @@ class Grid:
       self.cells[at.south()] = replace(south, north=replace(south.north, is_linked=True))
     return self
 
+  '''Link the cell at @at to its eastern neighbor'''
   def link_east(self, at: At) -> 'Grid':
     self._validate_at(at)
     cell = self.cells[at]
@@ -38,6 +41,7 @@ class Grid:
       self.cells[at.east()] = replace(east, west=replace(east.west, is_linked=True))
     return self
 
+  '''Link the cell at @at to its western neighbor'''
   def link_west(self, at: At) -> 'Grid':
     self._validate_at(at)
     cell = self.cells[at]
@@ -47,6 +51,7 @@ class Grid:
       self.cells[at.west()] = replace(west, east=replace(west.east, is_linked=True))
     return self
 
+  '''Iterate cells in @col north to south'''
   def col_ns(self, col: int) -> Iterable[Cell]:
     if 0 <= col < self.cols:
       for row in range(self.rows):
@@ -54,6 +59,7 @@ class Grid:
     else:
       yield from ()
 
+  '''Iterate cells in @col south to north'''
   def col_sn(self, col: int) -> Iterable[Cell]:
     if 0 <= col < self.cols:
       for row in range(self.rows - 1, -1, -1):
@@ -61,6 +67,7 @@ class Grid:
     else:
       yield from ()
 
+  '''Iterate cells in @row west to east'''
   def row_we(self, row: int) -> Iterable[Cell]:
     if 0 <= row < self.rows:
       for col in range(self.cols):
@@ -68,6 +75,7 @@ class Grid:
     else:
       yield from ()
 
+  '''Iterate cells in @row east to west'''
   def row_ew(self, row: int) -> Iterable[Cell]:
     if 0 <= row < self.rows:
       for col in range(self.cols - 1, -1, -1):
