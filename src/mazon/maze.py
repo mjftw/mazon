@@ -1,22 +1,37 @@
 import random
-from typing import Optional
-
+from typing import List, Optional
 from mazon.at import At
+
 from mazon.grid import Grid
 
-def binaryTree(rows: int, cols: int, seed: Optional[int] = None) -> Grid:
+def binary_tree(rows: int, cols: int, seed: Optional[int] = None) -> Grid:
   if seed is not None:
     random.seed(seed)
 
   grid = Grid(rows, cols)
 
-  for row in range(grid.rows):
-    for col in range(grid.cols):
-      rand = random.randint(1, 100)
-      at = At(row, col)
-      if rand > 50:
+  for row in grid.row_idx_ns():
+    for at, _ in grid.row_we(row):
+      if random.choice([True, False]):
         grid.link_north(at) or grid.link_east(at)
       else:
         grid.link_east(at) or grid.link_north(at)
+
+  return grid
+
+def sidewinder(rows: int, cols: int, seed: Optional[int] = None) -> Grid:
+  if seed is not None:
+    random.seed(seed)
+
+  grid = Grid(rows, cols)
+  run: List[At] = []
+
+  for row in grid.row_idx_ns():
+    for at, _ in grid.row_we(row):
+      run.append(at)
+      # If True or can't link east, link north. If that fails, link east regardless.
+      if random.choice([True, False]) or not grid.link_east(at):
+        grid.link_north(random.choice(run)) or grid.link_east(at)
+        run = []
 
   return grid
