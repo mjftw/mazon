@@ -3,7 +3,7 @@
 from dataclasses import replace
 from mazon.at import At
 from mazon.cell import Cell, Neighbor
-from typing import Dict, Iterable
+from typing import Dict, Iterable, Tuple
 
 class Grid:
   def __init__(self, rows: int, cols: int):
@@ -67,35 +67,56 @@ class Grid:
     else:
       return False
 
+
+  '''Iterate over col indexes west to east'''
+  def col_idx_we(self) -> Iterable[int]:
+    return range(self.cols)
+
+  '''Iterate over col indexes east to west'''
+  def col_idx_ew(self) -> Iterable[int]:
+    return range(self.cols - 1, -1, -1)
+
+  '''Iterate over row indexes north to south'''
+  def row_idx_ns(self) -> Iterable[int]:
+    return range(self.rows)
+
+  '''Iterate over row indexes south to north'''
+  def row_idx_sn(self) -> Iterable[int]:
+    return range(self.rows - 1, -1, -1)
+
   '''Iterate cells in @col north to south'''
-  def col_ns(self, col: int) -> Iterable[Cell]:
+  def col_ns(self, col: int) -> Iterable[Tuple[At, Cell]]:
     if 0 <= col < self.cols:
-      for row in range(self.rows):
-        yield self.cells[At(row, col)]
+      for row in self.row_idx_ns():
+        at = At(row, col)
+        yield (at, self.cells[at])
     else:
       yield from ()
 
   '''Iterate cells in @col south to north'''
-  def col_sn(self, col: int) -> Iterable[Cell]:
+  def col_sn(self, col: int) -> Iterable[Tuple[At, Cell]]:
     if 0 <= col < self.cols:
-      for row in range(self.rows - 1, -1, -1):
-        yield self.cells[At(row, col)]
+      for row in self.row_idx_sn():
+        at = At(row, col)
+        yield (at, self.cells[at])
     else:
       yield from ()
 
   '''Iterate cells in @row west to east'''
-  def row_we(self, row: int) -> Iterable[Cell]:
+  def row_we(self, row: int) -> Iterable[Tuple[At, Cell]]:
     if 0 <= row < self.rows:
-      for col in range(self.cols):
-        yield self.cells[At(row, col)]
+      for col in self.col_idx_we():
+        at = At(row, col)
+        yield (at, self.cells[at])
     else:
       yield from ()
 
   '''Iterate cells in @row east to west'''
-  def row_ew(self, row: int) -> Iterable[Cell]:
+  def row_ew(self, row: int) -> Iterable[Tuple[At, Cell]]:
     if 0 <= row < self.rows:
-      for col in range(self.cols - 1, -1, -1):
-        yield self.cells[At(row, col)]
+      for col in self.col_idx_ew():
+        at = At(row, col)
+        yield (at, self.cells[at])
     else:
       yield from ()
 
@@ -103,11 +124,11 @@ class Grid:
     print(self.rows)
     output: str = "+" + ("---+" * self.cols) + "\n"
 
-    for row in range(self.rows):
+    for row in self.row_idx_ns():
       middle_str = "|"
       bottom_str = "+"
 
-      for cell in self.row_we(row):
+      for _, cell in self.row_we(row):
         middle_str += "   " + (" " if cell.east and cell.east.is_linked else "|")
         bottom_str += ("   " if cell.south and cell.south.is_linked else "---") + "+"
 
